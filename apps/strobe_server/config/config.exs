@@ -10,3 +10,4 @@ use Mix.Config
 # Uncomment to use target specific configurations
 
 # import_config "#{Mix.Project.config[:target]}.exs"
+config :nerves, :firmware, rootfs_overlay: "rootfs_overlay"

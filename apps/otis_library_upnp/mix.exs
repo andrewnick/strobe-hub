@@ -8,7 +8,7 @@ defmodule Otis.Library.UPNP.Mixfile do
      config_path: "../../config/config.exs",
      deps_path: "../../deps",
      lockfile: "../../mix.lock",
-     elixir: "~> 1.4",
+     elixir: "~> 1.8",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      consolidate_protocols: Mix.env != :test,
@@ -27,8 +27,8 @@ defmodule Otis.Library.UPNP.Mixfile do
      {:erlsom, github: "willemdj/erlsom"},
      {:xml_builder, "~> 0.0.9"},
      {:otis_library, in_umbrella: true},
-     {:httparrot, "~> 1.0.0", only: :test},
-     {:gen_stage, "~> 0.12"},
+     {:httparrot, "~> 1.1.0", only: :test},
+     {:gen_stage, "~> 0.14"},
      {:poison, "~> 1.0"},
     ]
   end

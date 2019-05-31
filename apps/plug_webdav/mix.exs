@@ -8,7 +8,7 @@ defmodule Plug.WebDAV.Mixfile do
      config_path: "../../config/config.exs",
      deps_path: "../../deps",
      lockfile: "../../mix.lock",
-     elixir: "~> 1.4",
+     elixir: "~> 1.8",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      consolidate_protocols: Mix.env != :test,
@@ -22,7 +22,7 @@ defmodule Plug.WebDAV.Mixfile do
   end
 
   defp deps do
-    [{:plug, "~> 1.3.0"},
+    [{:plug, "~> 1.8.0"},
      {:cowboy, "~> 1.1.2"},
      {:sweet_xml, "~> 0.6.5"},
      {:mime, "~> 1.1"},

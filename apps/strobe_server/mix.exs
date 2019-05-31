@@ -4,6 +4,7 @@ defmodule Strobe.Server.Mixfile do
   # Default to "host" target to prevent this app doing anything in most
   # circumstances, use `MIX_TARGET=rpi3` for nerves-related activity
   @target System.get_env("MIX_TARGET") || "host"
+  @all_targets [:rpi, :rpi0, :rpi2, :rpi3, :rpi3a, :bbb, :x86_64]
 
   Mix.shell.info([:green, """
   Env
@@ -13,17 +14,25 @@ defmodule Strobe.Server.Mixfile do
   def project do
     [app: :strobe_server,
      version: "0.1.0",
-     elixir: "~> 1.4.0",
+     elixir: "~> 1.8.0",
      target: @target,
-     archives: [nerves_bootstrap: "~> 0.3.0"],
+     archives: [nerves_bootstrap: "~> 1.5"],
      deps_path: "../../deps/#{@target}",
      build_path: "../../_build/#{@target}",
      config_path: "../../config/config.exs",
      lockfile: "../../mix.lock",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     aliases: aliases(@target),
+     aliases: [loadconfig: [&bootstrap/1]],
      deps: deps()]
+  end
+
+  # Starting nerves_bootstrap adds the required aliases to Mix.Project.config()
+  # Aliases are only added if MIX_TARGET is set.
+  def bootstrap(args) do
+    Application.start(:nerves_bootstrap)
+    Mix.shell.info([:green, "Bootstrap", :reset])
+    Mix.Task.run("loadconfig", args)
   end
 
   # Configuration for the OTP application.
@@ -42,7 +51,7 @@ defmodule Strobe.Server.Mixfile do
     [mod: {Strobe.Server.Application, []},
      applications: [
        :gen_stage,
-       :nerves_networking,
+       :nerves_network,
        :nerves_network_interface,
      ],
      extra_applications: [:logger],
@@ -65,20 +74,25 @@ defmodule Strobe.Server.Mixfile do
   # Specify target specific dependencies
   def deps("host"), do: []
   def deps(target) do
-    [{:nerves_runtime, "~> 0.1.0", only: :nerves},
-     {:"nerves_system_#{target}", "~> 0.11.0", runtime: false, only: :nerves},
-     {:nerves, "~> 0.5.0", runtime: false, only: :nerves},
-     {:gen_stage, "~> 0.12", only: :nerves},
-     {:nerves_networking, github: "nerves-project/nerves_networking", only: :nerves},
-     {:nerves_network_interface, "~> 0.4.0", only: :nerves},
-     {:elvis, in_umbrella: true, only: :nerves},
+    [
+      {:nerves, "~> 1.4.4", runtime: false},
+      # {:shoehorn, "~> 0.4"},
+      {:toolshed, "~> 0.2"},
+
+      {:nerves_runtime, "~> 0.9"},
+      {:"nerves_system_#{target}", "~> 1.7", runtime: false},
+      
+      {:gen_stage, "~> 0.14"},
+      {:nerves_network, "~> 0.5"},
+      {:nerves_network_interface, "~> 0.4"},
+      {:elvis, in_umbrella: true},
     ]
   end
 
   # We do not invoke the Nerves Env when running on the Host
-  def aliases("host"), do: []
-  def aliases(_target) do
-    ["deps.precompile": ["nerves.precompile", "deps.precompile"],
-     "deps.loadpaths":  ["deps.loadpaths", "nerves.loadpaths"]]
-  end
+  # def aliases("host"), do: []
+  # def aliases(_target) do
+  #   ["deps.precompile": ["nerves.precompile", "deps.precompile"],
+  #    "deps.loadpaths":  ["deps.loadpaths", "nerves.loadpaths"]]
+  # end
 end

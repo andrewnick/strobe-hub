@@ -8,7 +8,7 @@ defmodule OtisLibrary.Mixfile do
      config_path: "../../config/config.exs",
      deps_path: "../../deps",
      lockfile: "../../mix.lock",
-     elixir: "~> 1.4",
+     elixir: "~> 1.8",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      consolidate_protocols: Mix.env != :test,
@@ -20,7 +20,7 @@ defmodule OtisLibrary.Mixfile do
   end
 
   defp deps do
-    [{:gen_stage, "~> 0.12"},
+    [{:gen_stage, "~> 0.14"},
      {:strobe_events, in_umbrella: true},
     ]
   end
